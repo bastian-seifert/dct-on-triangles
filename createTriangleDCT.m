@@ -9,11 +9,16 @@ idx=2*tmp(1,:) <= tmp(2,:);
 %create set of zeros of T_n
 zerosOfIdeal = tmp(:,idx) ./ [2*sizeN; 4*sizeN];
 
+chebIdx = [];
+for k = 0:sizeN-1
 %build all possible indices (k,l)
-tmp = combvec(0:1:sizeN-1,0:1:sizeN-1);
+tmp = combvec(0:1:k,0:1:k);
 %filter out the ones who satisfy constraint 
-idx=(tmp(1,:) + tmp(2,:)) < sizeN;
-chebIdx = tmp(:,idx);
+idx=(tmp(1,:) + tmp(2,:)) == k;
+chebIdx = [chebIdx,sortrows(tmp(:,idx))];
+end
+%[~,idx] = sort(chebIdx(1,:)+chebIdx(2,:));
+%chebIdx = chebIdx(:,idx);
 %evaluate B2 Chebyshev polynomials on zeros to obtain DCT on triangles
 triangleDCT = arrayfun(@(i)evalChebyshevB2(chebIdx(1,i),chebIdx(2,i),...
                             zerosOfIdeal(1,:),zerosOfIdeal(2,:)),1:length(chebIdx),'UniformOutput',false);
